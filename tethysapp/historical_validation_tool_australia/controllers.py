@@ -57,7 +57,7 @@ def get_discharge_data(request):
 		# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 		for data in dataDischarge:
 			data = 0.01157407407*data
-			data = str(data)
+			#data = str(data)
 			datas.append(data)
 
 		dataDischarge = datas
@@ -105,9 +105,9 @@ def get_simulated_data(request):
 
 		# Token is for the demo account
 		request_headers = dict(Authorization='Token 1adf07d983552705cd86ac681f3717510b6937f6')
-
+		
 		era_res = requests.get('https://tethys2.byu.edu/apps/streamflow-prediction-tool/api/GetHistoricData/',
-		                       params=request_params, headers=request_headers)
+							   params=request_params, headers=request_headers)
 
 		era_pairs = era_res.content.splitlines()
 		era_pairs.pop(0)
@@ -116,9 +116,10 @@ def get_simulated_data(request):
 		era_values = []
 
 		for era_pair in era_pairs:
+			era_pair = era_pair.decode('utf-8')
 			era_dates.append(dt.datetime.strptime(era_pair.split(',')[0], '%Y-%m-%d %H:%M:%S'))
 			era_values.append(float(era_pair.split(',')[1]))
-
+		
 		# ----------------------------------------------
 		# Chart Section
 		# ----------------------------------------------
@@ -143,7 +144,7 @@ def get_simulated_data(request):
 		return render(request, 'historical_validation_tool_australia/gizmo_ajax.html', context)
 
 	except Exception as e:
-		print (str(e))
+		print(str(e))
 		return JsonResponse({'error': 'No simulated data found for the selected station.'})
 
 def get_hydrographs(request):
@@ -176,6 +177,7 @@ def get_hydrographs(request):
 		era_values = []
 
 		for era_pair in era_pairs:
+			era_pair = era_pair.decode('utf-8')
 			era_dates.append(dt.datetime.strptime(era_pair.split(',')[0], '%Y-%m-%d %H:%M:%S'))
 			era_values.append(float(era_pair.split(',')[1]))
 
@@ -196,7 +198,7 @@ def get_hydrographs(request):
 		# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 		for data in dataDischarge:
 			data = 0.01157407407 * data
-			data = str(data)
+			#data = str(data)
 			datas.append(data)
 
 		dataDischarge = datas
@@ -226,7 +228,7 @@ def get_hydrographs(request):
 		return render(request, 'historical_validation_tool_australia/gizmo_ajax.html', context)
 
 	except Exception as e:
-		print (str(e))
+		print(str(e))
 		return JsonResponse({'error': 'No data found for the selected station.'})
 
 def get_dailyAverages(request):
@@ -259,6 +261,7 @@ def get_dailyAverages(request):
 		era_values = []
 
 		for era_pair in era_pairs:
+			era_pair = era_pair.decode('utf-8')
 			era_dates.append(dt.datetime.strptime(era_pair.split(',')[0], '%Y-%m-%d %H:%M:%S'))
 			era_values.append(float(era_pair.split(',')[1]))
 
@@ -279,7 +282,7 @@ def get_dailyAverages(request):
 		# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 		for data in dataDischarge:
 			data = 0.01157407407 * data
-			data = str(data)
+			#data = str(data)
 			datas.append(data)
 
 		dataDischarge = datas
@@ -311,7 +314,7 @@ def get_dailyAverages(request):
 		return render(request, 'historical_validation_tool_australia/gizmo_ajax.html', context)
 
 	except Exception as e:
-		print (str(e))
+		print(str(e))
 		return JsonResponse({'error': 'No data found for the selected station.'})
 
 def get_monthlyAverages(request):
@@ -344,6 +347,7 @@ def get_monthlyAverages(request):
 		era_values = []
 
 		for era_pair in era_pairs:
+			era_pair = era_pair.decode('utf-8')
 			era_dates.append(dt.datetime.strptime(era_pair.split(',')[0], '%Y-%m-%d %H:%M:%S'))
 			era_values.append(float(era_pair.split(',')[1]))
 
@@ -364,7 +368,7 @@ def get_monthlyAverages(request):
 		# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 		for data in dataDischarge:
 			data = 0.01157407407 * data
-			data = str(data)
+			#data = str(data)
 			datas.append(data)
 
 		dataDischarge = datas
@@ -396,7 +400,7 @@ def get_monthlyAverages(request):
 		return render(request, 'historical_validation_tool_australia/gizmo_ajax.html', context)
 
 	except Exception as e:
-		print (str(e))
+		print(str(e))
 		return JsonResponse({'error': 'No data found for the selected station.'})
 
 def get_scatterPlot(request):
@@ -429,6 +433,7 @@ def get_scatterPlot(request):
 		era_values = []
 
 		for era_pair in era_pairs:
+			era_pair = era_pair.decode('utf-8')
 			era_dates.append(dt.datetime.strptime(era_pair.split(',')[0], '%Y-%m-%d %H:%M:%S'))
 			era_values.append(float(era_pair.split(',')[1]))
 
@@ -449,7 +454,7 @@ def get_scatterPlot(request):
 		# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 		for data in dataDischarge:
 			data = 0.01157407407 * data
-			data = str(data)
+			#data = str(data)
 			datas.append(data)
 
 		dataDischarge = datas
@@ -501,7 +506,7 @@ def get_scatterPlot(request):
 		return render(request, 'historical_validation_tool_australia/gizmo_ajax.html', context)
 
 	except Exception as e:
-		print (str(e))
+		print(str(e))
 		return JsonResponse({'error': 'No data found for the selected station.'})
 
 
@@ -535,6 +540,7 @@ def get_scatterPlotLogScale(request):
 		era_values = []
 
 		for era_pair in era_pairs:
+			era_pair = era_pair.decode('utf-8')
 			era_dates.append(dt.datetime.strptime(era_pair.split(',')[0], '%Y-%m-%d %H:%M:%S'))
 			era_values.append(float(era_pair.split(',')[1]))
 
@@ -555,7 +561,7 @@ def get_scatterPlotLogScale(request):
 		# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 		for data in dataDischarge:
 			data = 0.01157407407 * data
-			data = str(data)
+			#data = str(data)
 			datas.append(data)
 
 		dataDischarge = datas
@@ -597,7 +603,7 @@ def get_scatterPlotLogScale(request):
 		return render(request, 'historical_validation_tool_australia/gizmo_ajax.html', context)
 
 	except Exception as e:
-		print (str(e))
+		print(str(e))
 		return JsonResponse({'error': 'No data found for the selected station.'})
 
 def get_volumeAnalysis(request):
@@ -630,6 +636,7 @@ def get_volumeAnalysis(request):
 		era_values = []
 
 		for era_pair in era_pairs:
+			era_pair = era_pair.decode('utf-8')
 			era_dates.append(dt.datetime.strptime(era_pair.split(',')[0], '%Y-%m-%d %H:%M:%S'))
 			era_values.append(float(era_pair.split(',')[1]))
 
@@ -650,7 +657,7 @@ def get_volumeAnalysis(request):
 		# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 		for data in dataDischarge:
 			data = 0.01157407407 * data
-			data = str(data)
+			#data = str(data)
 			datas.append(data)
 
 		dataDischarge = datas
@@ -699,7 +706,7 @@ def get_volumeAnalysis(request):
 		return render(request, 'historical_validation_tool_australia/gizmo_ajax.html', context)
 
 	except Exception as e:
-		print (str(e))
+		print(str(e))
 		return JsonResponse({'error': 'No data found for the selected station.'})
 
 
@@ -731,6 +738,7 @@ def volume_table_ajax(request):
 		era_values = []
 
 		for era_pair in era_pairs:
+			era_pair = era_pair.decode('utf-8')
 			era_dates.append(dt.datetime.strptime(era_pair.split(',')[0], '%Y-%m-%d %H:%M:%S'))
 			era_values.append(float(era_pair.split(',')[1]))
 
@@ -751,7 +759,7 @@ def volume_table_ajax(request):
 		# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 		for data in dataDischarge:
 			data = 0.01157407407 * data
-			data = str(data)
+			#data = str(data)
 			datas.append(data)
 
 		dataDischarge = datas
@@ -777,7 +785,7 @@ def volume_table_ajax(request):
 		return JsonResponse(resp)
 
 	except Exception as e:
-		print (str(e))
+		print(str(e))
 		return JsonResponse({'error': 'No data found for the selected station.'})
 
 def make_table_ajax(request):
@@ -872,6 +880,7 @@ def make_table_ajax(request):
 		era_values = []
 
 		for era_pair in era_pairs:
+			era_pair = era_pair.decode('utf-8')
 			era_dates.append(dt.datetime.strptime(era_pair.split(',')[0], '%Y-%m-%d %H:%M:%S'))
 			era_values.append(float(era_pair.split(',')[1]))
 
@@ -892,7 +901,7 @@ def make_table_ajax(request):
 		# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 		for data in dataDischarge:
 			data = 0.01157407407 * data
-			data = str(data)
+			#data = str(data)
 			datas.append(data)
 
 		if isinstance(dataDischarge[0], str):
@@ -953,7 +962,7 @@ def get_observed_discharge_csv(request):
 		# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 		for data in observedDischarge:
 			data = 0.01157407407 * data
-			data = str(data)
+			#data = str(data)
 			datas.append(data)
 
 		observedDischarge = datas
@@ -972,7 +981,7 @@ def get_observed_discharge_csv(request):
 		return response
 
 	except Exception as e:
-		print (str(e))
+		print(str(e))
 		return JsonResponse({'error': 'An unknown error occurred while retrieving the Discharge Data.'})
 
 
@@ -1006,6 +1015,7 @@ def get_simulated_discharge_csv(request):
 		era_values = []
 
 		for era_pair in era_pairs:
+			era_pair = era_pair.decode('utf-8')
 			era_dates.append(dt.datetime.strptime(era_pair.split(',')[0], '%Y-%m-%d %H:%M:%S'))
 			era_values.append(float(era_pair.split(',')[1]))
 
@@ -1023,5 +1033,5 @@ def get_simulated_discharge_csv(request):
 		return response
 
 	except Exception as e:
-		print (str(e))
+		print(str(e))
 		return JsonResponse({'error': 'An unknown error occurred while retrieving the Discharge Data.'})

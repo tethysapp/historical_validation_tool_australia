@@ -18,8 +18,8 @@ dependencies = [
     'numpy',
     'datetime',
     'hydrostats',
-	'scipy',
-	'traceback',
+    'scipy',
+    'traceback',
     'csv',
 ]
 
