@@ -12,15 +12,12 @@ app_package_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'teth
 ### Python Dependencies ###
 dependencies = [
     'pandas',
-    'io',
     'requests',
     'plotly',
     'numpy',
     'datetime',
     'hydrostats',
     'scipy',
-    'traceback',
-    'csv',
 ]
 
 setup(
