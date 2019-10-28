@@ -84,7 +84,7 @@ def get_discharge_data(request):
 		return render(request, 'historical_validation_tool_australia/gizmo_ajax.html', context)
 
 	except Exception as e:
-		print (str(e))
+		print(str(e))
 		return JsonResponse({'error': 'No observed data found for the selected station.'})
 
 def get_simulated_data(request):
@@ -493,7 +493,7 @@ def get_scatterPlot(request):
 			name='{0}x + {1}'.format(str(round(slope, 2)), str(round(intercept, 2)))
 		)
 
-		layout = go.Layout(title="Scatter Plot for {0} - {1}".format(codEstacion, nomEstacion),
+		layout = go.Layout(title="Scatter Plot for {0}".format(nomEstacion),
 		                   xaxis=dict(title='Simulated', ), yaxis=dict(title='Observed', autorange=True),
 		                   showlegend=True)
 
@@ -590,7 +590,7 @@ def get_scatterPlotLogScale(request):
 			name='45deg line'
 		)
 
-		layout = go.Layout(title="Scatter Plot for {0} - {1} (Log Scale)".format(codEstacion, nomEstacion),
+		layout = go.Layout(title="Scatter Plot for {0} (Log Scale)".format(nomEstacion),
 		                   xaxis=dict(title='Simulated', type='log', ), yaxis=dict(title='Observed', type='log',
 		                                                                           autorange=True), showlegend=True)
 
@@ -693,7 +693,7 @@ def get_volumeAnalysis(request):
 		simulated_volume = go.Scatter(x=merged_df.index, y=sim_volume_cum, name='Simulated', )
 
 		layout = go.Layout(
-			title='Observed & Simulated Volume at<br> {0} - {1}'.format(codEstacion, nomEstacion),
+			title='Observed & Simulated Volume at<br> {0}'.format(nomEstacion),
 			xaxis=dict(title='Dates', ), yaxis=dict(title='Volume (Mm<sup>3</sup>)', autorange=True),
 			showlegend=True)
 

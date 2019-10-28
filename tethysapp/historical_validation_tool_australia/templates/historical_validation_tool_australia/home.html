@@ -234,12 +234,24 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h5 class="modal-title" id="help-modal-label">Example Modal</h5>
+          <h5 class="modal-title" id="help-modal-label">Historical Validation Tool</h5>
         </div>
         <div class="modal-body">
-          <p>You can add custom buttons to the app header using the <code>header_buttons</code> block. Use anchor/link tags for the button and wrap it in a div with the class <code>header-button</code>. For buttons with the gliphyicons, add the <code>glyphicon-button</code> class as well.</p>
-          <p>Ever have trouble using a modal in a Tethys app? Use the <code>after_app_content</code> block for modal content to allow them to function properly. See: <a href="https://getbootstrap.com/javascript/#modals">Bootstrap Modals</a></p>
-          <p>Add tooltips to any element by adding the <code>data-toggle</code>, <code>data-placement</code>, and <code>title</code> attributes to the button. See: <a href="https://getbootstrap.com/javascript/#tooltips">Bootstrap Tooltips</a></p>
+          <p>The Historical Validation Tool customized for Australia is a light-weight application for evaluating the historical simulation of Streamflow Prediction Too in Colombia.</p>
+          <p>This app allows us to use the hydrostats functionality in order to evaluate how accurate is the historical simulation in Streamflow Prediction Tool compared to the observed streamflow in 122 Gauging Stations in Australia.</p>
+          <p>Users can click on any station in the map to retrieve observed and simulated data.</p>
+            <ol>
+                <li> The first tab displays a plot of the historical observed data.</li>
+                <li> The second tab displays historic simulation data for 35 years from 1980 to 2015.</li>
+                <li> The third tab corresponds to the merged hydrographs for observed and simulated data.</li>
+                <li> The fourth tab displays the daily average streamflow for the historical observed and simulated data.</li>
+                <li> The fifth tab displays the monthly average streamflow for the historical observed and simulated data.</li>
+                <li> The sixth tab displays the scatter plot.</li>
+                <li> The seventh tab displays the scatter plot in the log scale.</li>
+                <li> The eighth tab correspond to the volume analysis and displays a table with the total simulated and observed volume and a plot with the cumulative simulated and observed volume.</li>
+                <li> The nineth tab allows you select a set of metrics that you want to use in order to validate the historical simulation of the Streamflow Prediction Tool.</li>
+                <li> The tenth tab allows you download the observed and the simulated data.</li>
+            </ol>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

@@ -33,7 +33,8 @@ function init_map() {
 
 	var streams = new ol.layer.Image({
 		source: new ol.source.ImageWMS({
-			url: 'https://tethys2.byu.edu/geoserver/australia_hydroviewer/wms',
+			//url: 'https://tethys2.byu.edu/geoserver/australia_hydroviewer/wms',
+			url: 'https://tethys.byu.edu/geoserver/australia_hydroviewer/wms',
 			params: { 'LAYERS': 'australia-continental-drainage_line' },
 			serverType: 'geoserver',
 			crossOrigin: 'Anonymous'
@@ -43,7 +44,8 @@ function init_map() {
 
 	var stations = new ol.layer.Image({
 		source: new ol.source.ImageWMS({
-			url: 'https://tethys2.byu.edu/geoserver/australia_hydroviewer/wms',
+			//url: 'https://tethys2.byu.edu/geoserver/australia_hydroviewer/wms',
+			url: 'https://tethys.byu.edu/geoserver/australia_hydroviewer/wms',
 			params: { 'LAYERS': 'australia-stations' },
 			serverType: 'geoserver',
 			crossOrigin: 'Anonymous'
@@ -63,7 +65,8 @@ function init_map() {
 
 }
 
-let ajax_url = 'https://tethys2.byu.edu/geoserver/australia_hydroviewer/wfs?request=GetCapabilities';
+//let ajax_url = 'https://tethys2.byu.edu/geoserver/australia_hydroviewer/wfs?request=GetCapabilities';
+let ajax_url = 'https://tethys.byu.edu/geoserver/australia_hydroviewer/wfs?request=GetCapabilities';
 
 let capabilities = $.ajax(ajax_url, {
 	type: 'GET',
