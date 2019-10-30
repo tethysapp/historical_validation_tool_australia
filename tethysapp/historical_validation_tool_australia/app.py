@@ -86,7 +86,7 @@ class HistoricalValidationToolAustralia(TethysAppBase):
             ),
             UrlMap(
                 name='get_simulated_discharge_csv',
-                url='get-ssimulated-discharge-csv',
+                url='get-simulated-discharge-csv',
                 controller='historical_validation_tool_australia.controllers.get_simulated_discharge_csv'
             ),
         )

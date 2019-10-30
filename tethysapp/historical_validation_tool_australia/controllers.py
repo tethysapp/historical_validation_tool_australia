@@ -1005,8 +1005,7 @@ def get_simulated_discharge_csv(request):
 		# Token is for the demo account
 		request_headers = dict(Authorization='Token 1adf07d983552705cd86ac681f3717510b6937f6')
 
-		era_res = requests.get('https://tethys2.byu.edu/apps/streamflow-prediction-tool/api/GetHistoricData/',
-		                       params=request_params, headers=request_headers)
+		era_res = requests.get('https://tethys2.byu.edu/apps/streamflow-prediction-tool/api/GetHistoricData/', params=request_params, headers=request_headers)
 
 		era_pairs = era_res.content.splitlines()
 		era_pairs.pop(0)
