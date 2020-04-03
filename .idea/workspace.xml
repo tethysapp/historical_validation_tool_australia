@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="64c6f494-caad-4619-bee2-59b110e5df88" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/tethysapp/__init__.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/__init__.py" afterPath="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/__init__.py" />
+      <change beforePath="$PROJECT_DIR$/setup.py" afterPath="$PROJECT_DIR$/setup2.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -36,7 +35,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="home.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="home.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/public/js/home.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="90">
@@ -58,7 +57,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fix_tethys_init_files.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="fix_tethys_init_files.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fix_tethys_init_files.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
@@ -70,8 +69,8 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/setup.py">
+      <file leaf-file-name="setup2.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/setup2.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="90">
               <caret line="6" column="51" lean-forward="false" selection-start-line="6" selection-start-column="15" selection-end-line="6" selection-end-column="51" />
@@ -105,6 +104,7 @@
       <find>simulated</find>
       <find>observed</find>
       <find>print</find>
+      <find>australas</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -203,9 +203,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="17" y="106" width="1520" height="626" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25304466" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25304466" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="R Packages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="R Graphics" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -303,17 +302,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fix_tethys_init_files.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/setup.py">
+    <entry file="file://$PROJECT_DIR$/setup2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="51" lean-forward="false" selection-start-line="6" selection-start-column="15" selection-end-line="6" selection-end-column="51" />
@@ -348,6 +337,16 @@
         <state relative-caret-position="90">
           <caret line="593" column="50" lean-forward="false" selection-start-line="593" selection-start-column="41" selection-end-line="593" selection-end-column="50" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fix_tethys_init_files.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
