@@ -90,11 +90,6 @@ class HistoricalValidationToolAustralia(TethysAppBase):
                 controller='historical_validation_tool_australia.controllers.make_table_ajax2'
             ),
             UrlMap(
-                name='get-available-dates',
-                url='get-available-dates',
-                controller='historical_validation_tool_australia.controllers.get_available_dates'
-            ),
-            UrlMap(
                 name='get-time-series',
                 url='get-time-series',
                 controller='historical_validation_tool_australia.controllers.get_time_series'
