@@ -56,7 +56,8 @@ def get_discharge_data(request):
 		mm = str(now.month)
 		dd = now.day
 
-		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(ts_id, yyyy, mm, dd)
+		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(
+			ts_id, yyyy, mm, dd)
 		f = requests.get(url_rt, verify=False)
 
 		url = 'http://www.bom.gov.au/water/hrs/content/data/{0}/{1}_daily_ts.csv'.format(codEstacion, codEstacion)
@@ -89,8 +90,45 @@ def get_discharge_data(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -101,12 +139,12 @@ def get_discharge_data(request):
 			dataDischarge = df.iloc[:, 0].values
 			dataDischarge.tolist()
 
-			datas =[]
+			datas = []
 			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 
 			for data in dataDischarge:
-				data = 0.01157407407*data
-				#data = str(data)
+				data = 0.01157407407 * data
+				# data = str(data)
 				datas.append(data)
 
 			dataDischarge = datas
@@ -116,11 +154,8 @@ def get_discharge_data(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		observed_Q = go.Scatter(
 			x=observed_df.index,
@@ -233,7 +268,8 @@ def get_simulated_bc_data(request):
 		mm = str(now.month)
 		dd = now.day
 
-		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(ts_id, yyyy, mm, dd)
+		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(
+			ts_id, yyyy, mm, dd)
 		f = requests.get(url_rt, verify=False)
 
 		url = 'http://www.bom.gov.au/water/hrs/content/data/{0}/{1}_daily_ts.csv'.format(codEstacion, codEstacion)
@@ -266,8 +302,45 @@ def get_simulated_bc_data(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -278,12 +351,12 @@ def get_simulated_bc_data(request):
 			dataDischarge = df.iloc[:, 0].values
 			dataDischarge.tolist()
 
-			datas =[]
+			datas = []
 			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 
 			for data in dataDischarge:
-				data = 0.01157407407*data
-				#data = str(data)
+				data = 0.01157407407 * data
+				# data = str(data)
 				datas.append(data)
 
 			dataDischarge = datas
@@ -293,11 +366,8 @@ def get_simulated_bc_data(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		'''Correct the Bias in Sumulation'''
 
@@ -367,7 +437,8 @@ def get_hydrographs(request):
 		mm = str(now.month)
 		dd = now.day
 
-		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(ts_id, yyyy, mm, dd)
+		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(
+			ts_id, yyyy, mm, dd)
 		f = requests.get(url_rt, verify=False)
 
 		url = 'http://www.bom.gov.au/water/hrs/content/data/{0}/{1}_daily_ts.csv'.format(codEstacion, codEstacion)
@@ -400,8 +471,45 @@ def get_hydrographs(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -412,12 +520,12 @@ def get_hydrographs(request):
 			dataDischarge = df.iloc[:, 0].values
 			dataDischarge.tolist()
 
-			datas =[]
+			datas = []
 			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 
 			for data in dataDischarge:
-				data = 0.01157407407*data
-				#data = str(data)
+				data = 0.01157407407 * data
+				# data = str(data)
 				datas.append(data)
 
 			dataDischarge = datas
@@ -427,11 +535,8 @@ def get_hydrographs(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		'''Correct the Bias in Sumulation'''
 
@@ -506,7 +611,8 @@ def get_dailyAverages(request):
 		mm = str(now.month)
 		dd = now.day
 
-		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(ts_id, yyyy, mm, dd)
+		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(
+			ts_id, yyyy, mm, dd)
 		f = requests.get(url_rt, verify=False)
 
 		url = 'http://www.bom.gov.au/water/hrs/content/data/{0}/{1}_daily_ts.csv'.format(codEstacion, codEstacion)
@@ -539,8 +645,45 @@ def get_dailyAverages(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -551,12 +694,12 @@ def get_dailyAverages(request):
 			dataDischarge = df.iloc[:, 0].values
 			dataDischarge.tolist()
 
-			datas =[]
+			datas = []
 			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 
 			for data in dataDischarge:
-				data = 0.01157407407*data
-				#data = str(data)
+				data = 0.01157407407 * data
+				# data = str(data)
 				datas.append(data)
 
 			dataDischarge = datas
@@ -566,11 +709,8 @@ def get_dailyAverages(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		'''Correct the Bias in Sumulation'''
 
@@ -646,7 +786,8 @@ def get_monthlyAverages(request):
 		mm = str(now.month)
 		dd = now.day
 
-		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(ts_id, yyyy, mm, dd)
+		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(
+			ts_id, yyyy, mm, dd)
 		f = requests.get(url_rt, verify=False)
 
 		url = 'http://www.bom.gov.au/water/hrs/content/data/{0}/{1}_daily_ts.csv'.format(codEstacion, codEstacion)
@@ -679,8 +820,45 @@ def get_monthlyAverages(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -691,12 +869,12 @@ def get_monthlyAverages(request):
 			dataDischarge = df.iloc[:, 0].values
 			dataDischarge.tolist()
 
-			datas =[]
+			datas = []
 			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 
 			for data in dataDischarge:
-				data = 0.01157407407*data
-				#data = str(data)
+				data = 0.01157407407 * data
+				# data = str(data)
 				datas.append(data)
 
 			dataDischarge = datas
@@ -706,11 +884,8 @@ def get_monthlyAverages(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		'''Correct the Bias in Sumulation'''
 
@@ -786,7 +961,8 @@ def get_scatterPlot(request):
 		mm = str(now.month)
 		dd = now.day
 
-		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(ts_id, yyyy, mm, dd)
+		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(
+			ts_id, yyyy, mm, dd)
 		f = requests.get(url_rt, verify=False)
 
 		url = 'http://www.bom.gov.au/water/hrs/content/data/{0}/{1}_daily_ts.csv'.format(codEstacion, codEstacion)
@@ -819,8 +995,45 @@ def get_scatterPlot(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -831,12 +1044,12 @@ def get_scatterPlot(request):
 			dataDischarge = df.iloc[:, 0].values
 			dataDischarge.tolist()
 
-			datas =[]
+			datas = []
 			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 
 			for data in dataDischarge:
-				data = 0.01157407407*data
-				#data = str(data)
+				data = 0.01157407407 * data
+				# data = str(data)
 				datas.append(data)
 
 			dataDischarge = datas
@@ -846,11 +1059,8 @@ def get_scatterPlot(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		'''Correct the Bias in Sumulation'''
 
@@ -1002,8 +1212,45 @@ def get_scatterPlotLogScale(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -1029,11 +1276,8 @@ def get_scatterPlotLogScale(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		'''Correct the Bias in Sumulation'''
 
@@ -1125,7 +1369,8 @@ def get_volumeAnalysis(request):
 		mm = str(now.month)
 		dd = now.day
 
-		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(ts_id, yyyy, mm, dd)
+		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(
+			ts_id, yyyy, mm, dd)
 		f = requests.get(url_rt, verify=False)
 
 		url = 'http://www.bom.gov.au/water/hrs/content/data/{0}/{1}_daily_ts.csv'.format(codEstacion, codEstacion)
@@ -1158,8 +1403,45 @@ def get_volumeAnalysis(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -1170,12 +1452,12 @@ def get_volumeAnalysis(request):
 			dataDischarge = df.iloc[:, 0].values
 			dataDischarge.tolist()
 
-			datas =[]
+			datas = []
 			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 
 			for data in dataDischarge:
-				data = 0.01157407407*data
-				#data = str(data)
+				data = 0.01157407407 * data
+				# data = str(data)
 				datas.append(data)
 
 			dataDischarge = datas
@@ -1185,11 +1467,8 @@ def get_volumeAnalysis(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		'''Correct the Bias in Sumulation'''
 
@@ -1287,7 +1566,8 @@ def volume_table_ajax(request):
 		mm = str(now.month)
 		dd = now.day
 
-		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(ts_id, yyyy, mm, dd)
+		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(
+			ts_id, yyyy, mm, dd)
 		f = requests.get(url_rt, verify=False)
 
 		url = 'http://www.bom.gov.au/water/hrs/content/data/{0}/{1}_daily_ts.csv'.format(codEstacion, codEstacion)
@@ -1320,8 +1600,45 @@ def volume_table_ajax(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -1332,12 +1649,12 @@ def volume_table_ajax(request):
 			dataDischarge = df.iloc[:, 0].values
 			dataDischarge.tolist()
 
-			datas =[]
+			datas = []
 			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 
 			for data in dataDischarge:
-				data = 0.01157407407*data
-				#data = str(data)
+				data = 0.01157407407 * data
+				# data = str(data)
 				datas.append(data)
 
 			dataDischarge = datas
@@ -1347,11 +1664,8 @@ def volume_table_ajax(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		'''Correct the Bias in Sumulation'''
 
@@ -1482,7 +1796,8 @@ def make_table_ajax(request):
 		mm = str(now.month)
 		dd = now.day
 
-		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(ts_id, yyyy, mm, dd)
+		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(
+			ts_id, yyyy, mm, dd)
 		f = requests.get(url_rt, verify=False)
 
 		url = 'http://www.bom.gov.au/water/hrs/content/data/{0}/{1}_daily_ts.csv'.format(codEstacion, codEstacion)
@@ -1515,8 +1830,45 @@ def make_table_ajax(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -1527,12 +1879,12 @@ def make_table_ajax(request):
 			dataDischarge = df.iloc[:, 0].values
 			dataDischarge.tolist()
 
-			datas =[]
+			datas = []
 			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 
 			for data in dataDischarge:
-				data = 0.01157407407*data
-				#data = str(data)
+				data = 0.01157407407 * data
+				# data = str(data)
 				datas.append(data)
 
 			dataDischarge = datas
@@ -1542,11 +1894,8 @@ def make_table_ajax(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		'''Correct the Bias in Sumulation'''
 
@@ -1742,7 +2091,8 @@ def get_time_series_bc(request):
 		mm = str(now.month)
 		dd = now.day
 
-		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(ts_id, yyyy, mm, dd)
+		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(
+			ts_id, yyyy, mm, dd)
 		f = requests.get(url_rt, verify=False)
 
 		url = 'http://www.bom.gov.au/water/hrs/content/data/{0}/{1}_daily_ts.csv'.format(codEstacion, codEstacion)
@@ -1775,8 +2125,45 @@ def get_time_series_bc(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -1787,12 +2174,12 @@ def get_time_series_bc(request):
 			dataDischarge = df.iloc[:, 0].values
 			dataDischarge.tolist()
 
-			datas =[]
+			datas = []
 			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 
 			for data in dataDischarge:
-				data = 0.01157407407*data
-				#data = str(data)
+				data = 0.01157407407 * data
+				# data = str(data)
 				datas.append(data)
 
 			dataDischarge = datas
@@ -1802,11 +2189,8 @@ def get_time_series_bc(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		'''Get Forecasts'''
 
@@ -1947,8 +2331,45 @@ def get_observed_discharge_csv(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -1974,11 +2395,8 @@ def get_observed_discharge_csv(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		pairs = [list(a) for a in zip(observed_df.index, observed_df.iloc[:, 0].values)]
 
@@ -2078,7 +2496,8 @@ def get_simulated_bc_discharge_csv(request):
 		mm = str(now.month)
 		dd = now.day
 
-		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(ts_id, yyyy, mm, dd)
+		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(
+			ts_id, yyyy, mm, dd)
 		f = requests.get(url_rt, verify=False)
 
 		url = 'http://www.bom.gov.au/water/hrs/content/data/{0}/{1}_daily_ts.csv'.format(codEstacion, codEstacion)
@@ -2111,8 +2530,45 @@ def get_simulated_bc_discharge_csv(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -2123,12 +2579,12 @@ def get_simulated_bc_discharge_csv(request):
 			dataDischarge = df.iloc[:, 0].values
 			dataDischarge.tolist()
 
-			datas =[]
+			datas = []
 			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 
 			for data in dataDischarge:
-				data = 0.01157407407*data
-				#data = str(data)
+				data = 0.01157407407 * data
+				# data = str(data)
 				datas.append(data)
 
 			dataDischarge = datas
@@ -2138,11 +2594,8 @@ def get_simulated_bc_discharge_csv(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		'''Correct the Bias in Sumulation'''
 
@@ -2228,7 +2681,8 @@ def get_forecast_bc_data_csv(request):
 		mm = str(now.month)
 		dd = now.day
 
-		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(ts_id, yyyy, mm, dd)
+		url_rt = 'http://www.bom.gov.au/waterdata/services?service=kisters&type=queryServices&request=getTimeseriesValues&datasource=0&format=dajson&ts_id={0}&from=1900-01-01T00:00:00.000%2B09:30&to={1}-{2}-{3}T00:00:00.000%2B09:30&metadata=true&useprecision=false&timezone=GMT%2B09:30&md_returnfields=ts_id,ts_precision&userId=pub'.format(
+			ts_id, yyyy, mm, dd)
 		f = requests.get(url_rt, verify=False)
 
 		url = 'http://www.bom.gov.au/water/hrs/content/data/{0}/{1}_daily_ts.csv'.format(codEstacion, codEstacion)
@@ -2261,8 +2715,45 @@ def get_forecast_bc_data_csv(request):
 
 			# convert request into pandas DF
 			pairs = [list(a) for a in zip(datesObservedDischarge, observedDischarge)]
-			observed_df = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
-			observed_df.set_index('Datetime', inplace=True)
+			df1 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df1.set_index('Datetime', inplace=True)
+
+			df1 = df1.groupby(df1.index.strftime("%Y/%m/%d")).mean()
+			df1.index = pd.to_datetime(df1.index)
+
+			# Read csv files
+
+			df = pd.read_csv(io.StringIO(s.decode('utf-8')), index_col=0, skiprows=26)
+			df.index = pd.to_datetime(df.index)
+
+			datesDischarge = df.index.tolist()
+			dataDischarge = df.iloc[:, 0].values
+			dataDischarge.tolist()
+
+			datas = []
+			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
+
+			for data in dataDischarge:
+				data = 0.01157407407 * data
+				# data = str(data)
+				datas.append(data)
+
+			dataDischarge = datas
+
+			if isinstance(dataDischarge[0], str):
+				dataDischarge = map(float, dataDischarge)
+
+			pairs = [list(a) for a in zip(datesDischarge, dataDischarge)]
+			df2 = pd.DataFrame(pairs, columns=['Datetime', 'Observed (m3/s)'])
+			df2.set_index('Datetime', inplace=True)
+
+			observed_df = df1.fillna(df2)
+
+			observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
+			observed_df.index = pd.to_datetime(observed_df.index)
+
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		else:
 
@@ -2273,12 +2764,12 @@ def get_forecast_bc_data_csv(request):
 			dataDischarge = df.iloc[:, 0].values
 			dataDischarge.tolist()
 
-			datas =[]
+			datas = []
 			# The given units are in ML/day*(1000m3/1ML)*(1day/86400s). We need to convert to m3/s
 
 			for data in dataDischarge:
-				data = 0.01157407407*data
-				#data = str(data)
+				data = 0.01157407407 * data
+				# data = str(data)
 				datas.append(data)
 
 			dataDischarge = datas
@@ -2288,11 +2779,8 @@ def get_forecast_bc_data_csv(request):
 
 			observed_df = pd.DataFrame(data=dataDischarge, index=datesDischarge, columns=['Observed Streamflow'])
 
-		observed_df = observed_df.groupby(observed_df.index.strftime("%Y/%m/%d")).mean()
-		observed_df.index = pd.to_datetime(observed_df.index)
-
-		# Removing Negative Values
-		observed_df[observed_df < 0] = 0
+			# Removing Negative Values
+			observed_df[observed_df < 0] = 0
 
 		'''Get Forecasts'''
 
