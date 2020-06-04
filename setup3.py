@@ -6,7 +6,7 @@ app_package = 'historical_validation_tool_australia'
 release_package = 'tethysapp-' + app_package
 
 # -- Python Dependencies -- #
-dependencies = []
+dependencies = ['geoglows>=0.18.2']
 
 # -- Get Resource File -- #
 resource_files = find_resource_files('tethysapp/' + app_package + '/templates', 'tethysapp/' + app_package)
