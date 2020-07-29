@@ -758,10 +758,8 @@ function map_events() {
 					url: wms_url,
 					dataType: 'json',
 					success: function (result) {
-						//var watershed = 'australasia' //OJO buscar como hacerla generica
-						var watershed = 'australia' //OJO buscar como hacerla generica
-		         		//var subbasin = 'continental' //OJO buscar como hacerla generica
-		         		var subbasin = 'geoglows' //OJO buscar como hacerla generica
+						watershed = result["features"][0]["properties"]["watershed"];
+		         		subbasin = result["features"][0]["properties"]["subbasin"];
 		         		var startdate = '';
 		         		stationcode = result["features"][0]["properties"]["Code"];
 		         		ts_id = result["features"][0]["properties"]["ts_id"];
@@ -978,10 +976,6 @@ $(document).ready(function(){
     $("#make-table").click(function(){
         //console.log('Make Table Event Triggered');
         var model = $('#model option:selected').text();
-        //var watershed = 'australasia' //OJO buscar como hacerla generica
-        var watershed = 'australia' //OJO buscar como hacerla generica
-        //var subbasin = 'continental' //OJO buscar como hacerla generica
-        var subbasin = 'geoglows' //OJO buscar como hacerla generica
         var startdate = '';
         let xName = $("#Station-Name-Tab")
         let xCode = $("#Station-Code-Tab")
@@ -1006,6 +1000,7 @@ $(document).ready(function(){
 			'watershed': watershed,
 			'subbasin': subbasin,
 			'streamcomid': streamcomid,
+			'ts_id': ts_id,
 			'stationcode': stationcode,
 			'stationname': stationname,
 			'metrics': selected_metric_joined,
