@@ -13,7 +13,7 @@ class HistoricalValidationToolAustralia(TethysAppBase):
     root_url = 'historical-validation-tool-australia'
     color = '#012169'
     description = 'This app evaluates the accuracy for the historical streamflow values obtained from Streamflow Prediction Tool in Australia.'
-    tags = ''
+    tags = 'Hydrology'
     enable_feedback = False
     feedback_emails = []
 
