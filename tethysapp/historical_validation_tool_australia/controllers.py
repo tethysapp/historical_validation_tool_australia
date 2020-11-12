@@ -1941,6 +1941,7 @@ def make_table_ajax(request):
             lm_x_obs_bar_p=extra_param_dict['lm_x_bar_p'],
             # seasonal_periods=all_date_range_list
         )
+        table = table.round(decimals=2)
         table_html = table.transpose()
         table_html = table_html.to_html(classes="table table-hover table-striped").replace('border="1"', 'border="0"')
 
@@ -1960,6 +1961,7 @@ def make_table_ajax(request):
             lm_x_obs_bar_p=extra_param_dict['lm_x_bar_p'],
             # seasonal_periods=all_date_range_list
         )
+        table2 = table2.round(decimals=2)
         table_html2 = table2.transpose()
         table_html2 = table_html2.to_html(classes="table table-hover table-striped").replace('border="1"', 'border="0"')
 
