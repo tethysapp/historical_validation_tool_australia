@@ -1,4 +1,43 @@
 // Getting the csrf token
+function get_requestData (watershed, subbasin, streamcomid, ts_id, stationcode, stationname){
+  getdata = {
+      'watershed': watershed,
+      'subbasin': subbasin,
+      'ts_id': ts_id,
+      'streamcomid': streamcomid,
+      'stationcode':stationcode,
+      'stationname': stationname,
+  };
+  $.ajax({
+      url: 'get-request-data',
+      type: 'GET',
+      data: getdata,
+      error: function() {
+          $('#info').html('<p class="alert alert-danger" style="text-align: center"><strong>An unknown error occurred while retrieving the data</strong></p>');
+          $('#info').removeClass('hidden');
+
+          setTimeout(function () {
+              $('#info').addClass('hidden')
+          }, 5000);
+      },
+      success: function (data) {
+        console.log(data)
+        get_hydrographs (watershed, subbasin, ts_id, streamcomid, stationcode, stationname)
+        get_dailyAverages (watershed, subbasin, ts_id, streamcomid, stationcode, stationname);
+        get_monthlyAverages (watershed, subbasin, ts_id, streamcomid, stationcode, stationname);
+        get_scatterPlot (watershed, subbasin, ts_id, streamcomid, stationcode, stationname);
+        get_scatterPlotLogScale (watershed, subbasin, ts_id, streamcomid, stationcode, stationname);
+        get_volumeAnalysis (watershed, subbasin, ts_id, streamcomid, stationcode, stationname);
+        createVolumeTable(watershed, subbasin, ts_id, streamcomid, stationcode, stationname);
+        makeDefaultTable(watershed, subbasin, ts_id, streamcomid, stationcode, stationname);
+        get_time_series(watershed, subbasin, ts_id, streamcomid, stationcode, stationname);
+        get_time_series_bc(watershed, subbasin, ts_id, streamcomid, stationcode, stationname);
+      }
+  })
+
+}
+
+// Getting the csrf token
 let csrftoken = Cookies.get('csrftoken');
 
 function csrfSafeMethod(method) {
@@ -101,198 +140,6 @@ let capabilities = $.ajax(ajax_url, {
 		map.getView().fit(extent, map.getSize());
 	}
 });
-
-function get_discharge_info (stationcode, stationname, ts_id) {
-	$('#observed-loading-Q').removeClass('hidden');
-    $.ajax({
-        url: 'get-discharge-data',
-        type: 'GET',
-        data: {'stationcode' : stationcode, 'stationname': stationname, 'ts_id': ts_id},
-        error: function () {
-            $('#info').html('<p class="alert alert-danger" style="text-align: center"><strong>An unknown error occurred while retrieving the observed data</strong></p>');
-            $('#info').removeClass('hidden');
-
-            setTimeout(function () {
-                $('#info').addClass('hidden')
-            }, 5000);
-        },
-        success: function (data) {
-            if (!data.error) {
-                $('#observed-loading-Q').addClass('hidden');
-                $('#dates').removeClass('hidden');
-//                $('#obsdates').removeClass('hidden');
-                $loading.addClass('hidden');
-                $('#observed-chart-Q').removeClass('hidden');
-                $('#observed-chart-Q').html(data);
-
-                //resize main graph
-                Plotly.Plots.resize($("#observed-chart-Q .js-plotly-plot")[0]);
-                Plotly.relayout($("#observed-chart-Q .js-plotly-plot")[0], {
-                	'xaxis.autorange': true,
-                	'yaxis.autorange': true
-                });
-
-                var params = {
-                    stationcode: stationcode,
-                    stationname: stationname,
-                    ts_id: ts_id
-                };
-
-                $('#submit-download-observed-discharge').attr({
-                    target: '_blank',
-                    href: 'get-observed-discharge-csv?' + jQuery.param(params)
-                });
-
-                $('#download_observed_discharge').removeClass('hidden');
-
-            } else if (data.error) {
-            	$('#info').html('<p class="alert alert-danger" style="text-align: center"><strong>An unknown error occurred while retrieving the Observed Data</strong></p>');
-            	$('#info').removeClass('hidden');
-
-            	setTimeout(function() {
-            		$('#info').addClass('hidden')
-                }, 5000);
-
-            } else {
-            	$('#info').html('<p><strong>An unexplainable error occurred.</strong></p>').removeClass('hidden');
-            }
-        }
-    });
-};
-
-function get_simulated_data (watershed, subbasin, streamcomid, stationcode, stationname) {
-	$('#simulated-loading-Q').removeClass('hidden');
-	m_downloaded_historical_streamflow = true;
-    $.ajax({
-        url: 'get-simulated-data',
-        type: 'GET',
-        data: {
-            'watershed': watershed,
-            'subbasin': subbasin,
-            'streamcomid': streamcomid,
-            'stationcode':stationcode,
-            'stationname': stationname
-        },
-        error: function() {
-            $('#info').html('<p class="alert alert-danger" style="text-align: center"><strong>An unknown error occurred while retrieving the simulated data</strong></p>');
-            $('#info').removeClass('hidden');
-
-            setTimeout(function () {
-                $('#info').addClass('hidden')
-            }, 5000);
-        },
-        success: function (data) {
-            if (!data.error) {
-                $('#simulated-loading-Q').addClass('hidden');
-                $('#dates').removeClass('hidden');
-//                $('#obsdates').removeClass('hidden');
-                $loading.addClass('hidden');
-                $('#simulated-chart-Q').removeClass('hidden');
-                $('#simulated-chart-Q').html(data);
-
-                //resize main graph
-                Plotly.Plots.resize($("#simulated-chart-Q .js-plotly-plot")[0]);
-                Plotly.relayout($("#simulated-chart-Q .js-plotly-plot")[0], {
-                	'xaxis.autorange': true,
-                	'yaxis.autorange': true
-                });
-
-                var params = {
-                	watershed: watershed,
-                	subbasin: subbasin,
-                	streamcomid: streamcomid,
-                	stationcode:stationcode,
-                	stationname: stationname
-                };
-
-                $('#submit-download-simulated-discharge').attr({
-                    target: '_blank',
-                    href: 'get-simulated-discharge-csv?' + jQuery.param(params)
-                });
-
-                $('#download_simulated_discharge').removeClass('hidden');
-
-           		 } else if (data.error) {
-           		 	$('#info').html('<p class="alert alert-danger" style="text-align: center"><strong>An unknown error occurred while retrieving the Simulated Data</strong></p>');
-           		 	$('#info').removeClass('hidden');
-
-           		 	setTimeout(function() {
-           		 		$('#info').addClass('hidden')
-           		 	}, 5000);
-           		 } else {
-           		 	$('#info').html('<p><strong>An unexplainable error occurred.</strong></p>').removeClass('hidden');
-           		 }
-       		}
-    });
-};
-
-function get_simulated_bc_data (watershed, subbasin, streamcomid, ts_id, stationcode, stationname) {
-	$('#simulated-bc-loading-Q').removeClass('hidden');
-	m_downloaded_historical_streamflow = true;
-    $.ajax({
-        url: 'get-simulated-bc-data',
-        type: 'GET',
-        data: {
-            'watershed': watershed,
-            'subbasin': subbasin,
-            'streamcomid': streamcomid,
-            'ts_id': ts_id,
-            'stationcode':stationcode,
-            'stationname': stationname
-        },
-        error: function() {
-            $('#info').html('<p class="alert alert-danger" style="text-align: center"><strong>An unknown error occurred while retrieving the corrected simulated data</strong></p>');
-            $('#info').removeClass('hidden');
-
-            setTimeout(function () {
-                $('#info').addClass('hidden')
-            }, 5000);
-        },
-        success: function (data) {
-            if (!data.error) {
-                $('#simulated-bc-loading-Q').addClass('hidden');
-                $('#dates').removeClass('hidden');
-//                $('#obsdates').removeClass('hidden');
-                $loading.addClass('hidden');
-                $('#simulated-bc-chart-Q').removeClass('hidden');
-                $('#simulated-bc-chart-Q').html(data);
-
-                //resize main graph
-                Plotly.Plots.resize($("#simulated-bc-chart-Q .js-plotly-plot")[0]);
-                Plotly.relayout($("#simulated-bc-chart-Q .js-plotly-plot")[0], {
-                	'xaxis.autorange': true,
-                	'yaxis.autorange': true
-                });
-
-                var params = {
-                    watershed: watershed,
-                	subbasin: subbasin,
-                	streamcomid: streamcomid,
-                	ts_id: ts_id,
-                	stationcode:stationcode,
-                	stationname: stationname
-                };
-
-                $('#submit-download-simulated-bc-discharge').attr({
-                    target: '_blank',
-                    href: 'get-simulated-bc-discharge-csv?' + jQuery.param(params)
-                });
-
-                $('#download_simulated_bc_discharge').removeClass('hidden');
-
-           		 } else if (data.error) {
-           		 	$('#info').html('<p class="alert alert-danger" style="text-align: center"><strong>An unknown error occurred while retrieving the Simulated Data</strong></p>');
-           		 	$('#info').removeClass('hidden');
-
-           		 	setTimeout(function() {
-           		 		$('#info').addClass('hidden')
-           		 	}, 5000);
-           		 } else {
-           		 	$('#info').html('<p><strong>An unexplainable error occurred.</strong></p>').removeClass('hidden');
-           		 }
-       		}
-    });
-};
 
 function get_hydrographs (watershed, subbasin, streamcomid, ts_id, stationcode, stationname) {
 	$('#hydrographs-loading').removeClass('hidden');
@@ -774,19 +621,7 @@ function map_events() {
                         			+ stationcode + '</h3><h5 id="COMID-Tab">Station COMID: '
                         			+ streamcomid+ '</h5><h5>Stream: '+ stream
                         			+ '</h5><h5>Basin: '+ basin + '</h5><h5>Region: '+ region );
-                        get_discharge_info (stationcode, stationname, ts_id);
-                        get_simulated_data (watershed, subbasin, streamcomid, stationcode, stationname);
-                        get_simulated_bc_data (watershed, subbasin, streamcomid, ts_id, stationcode, stationname);
-                        get_hydrographs (watershed, subbasin, streamcomid, ts_id, stationcode, stationname);
-                        get_dailyAverages (watershed, subbasin, streamcomid, ts_id, stationcode, stationname);
-                        get_monthlyAverages (watershed, subbasin, streamcomid, ts_id, stationcode, stationname);
-                        get_scatterPlot (watershed, subbasin, streamcomid, ts_id, stationcode, stationname);
-                        get_scatterPlotLogScale (watershed, subbasin, streamcomid, ts_id, stationcode, stationname);
-                        get_volumeAnalysis (watershed, subbasin, streamcomid, ts_id, stationcode, stationname);
-                        createVolumeTable(watershed, subbasin, streamcomid, ts_id, stationcode, stationname);
-                        get_time_series(watershed, subbasin, streamcomid, ts_id);
-                        get_time_series_bc(watershed, subbasin, streamcomid, ts_id, stationcode, stationname);
-                        makeDefaultTable(watershed, subbasin, streamcomid, ts_id, stationcode, stationname);
+                        get_requestData(watershed, subbasin, streamcomid, ts_id, stationcode, stationname);
                     }
                 });
             }
