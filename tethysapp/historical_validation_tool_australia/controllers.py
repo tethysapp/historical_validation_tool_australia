@@ -29,14 +29,8 @@ nomEstacion = 'none'
 ts_id = 'none'
 s = None
 simulated_df = pd.DataFrame({'A' : []})
-#simulated_df = pd.DataFrame([(dt.datetime(1980, 1, 1, 0, 0), 0)], columns=['Datetime', 'Simulated Streamflow'])
-#simulated_df.set_index('Datetime', inplace=True)
 observed_df = pd.DataFrame({'A' : []})
-#observed_df = pd.DataFrame([(dt.datetime(1980, 1, 1, 0, 0), 0)], columns=['Datetime', 'Observed Streamflow'])
-#observed_df.set_index('Datetime', inplace=True)
 corrected_df = pd.DataFrame({'A' : []})
-#corrected_df = pd.DataFrame([(dt.datetime(1980, 1, 1, 0, 0), 0)], columns=['Datetime', 'Corrected Simulated'])
-#corrected_df.set_index('Datetime', inplace=True)
 forecast_df = pd.DataFrame({'A': []})
 fixed_stats = None
 forecast_record = None
@@ -857,6 +851,8 @@ def get_time_series(request):
 				  forecast_df.index[len(forecast_df.index) - 1], forecast_df.index[0])
 		max_visible = max(forecast_df.max())
 
+		'''Getting forecast record'''
+		
 		try:
 			if len(forecast_record.index) > 0:
 				hydroviewer_figure.add_trace(go.Scatter(
