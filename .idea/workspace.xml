@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="64c6f494-caad-4619-bee2-59b110e5df88" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/setup.py" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/tethysapp_historical_validation_tool_australia.egg-info/install.yml" afterPath="$PROJECT_DIR$/tethysapp_historical_validation_tool_australia.egg-info/install.yml" />
+      <change beforePath="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/app.py" afterPath="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/app.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,18 +18,18 @@
       <file leaf-file-name="app.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/app.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="525">
-              <caret line="35" column="14" lean-forward="false" selection-start-line="35" selection-start-column="14" selection-end-line="35" selection-end-column="14" />
+            <state relative-caret-position="225">
+              <caret line="15" column="114" lean-forward="false" selection-start-line="15" selection-start-column="114" selection-end-line="15" selection-end-column="114" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="setup3.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/setup3.py">
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/setup.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="17" column="140" lean-forward="false" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="140" />
+            <state relative-caret-position="142">
+              <caret line="19" column="116" lean-forward="false" selection-start-line="19" selection-start-column="116" selection-end-line="19" selection-end-column="116" />
               <folding />
             </state>
           </provider>
@@ -54,12 +55,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="controllers.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="controllers.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/controllers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="16" column="55" lean-forward="true" selection-start-line="16" selection-start-column="55" selection-end-line="16" selection-end-column="55" />
-              <folding />
+            <state relative-caret-position="975">
+              <caret line="65" column="19" lean-forward="false" selection-start-line="65" selection-start-column="19" selection-end-line="65" selection-end-column="19" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -149,10 +152,11 @@
         <option value="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/templates/historical_validation_tool_australia/home.html" />
         <option value="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/public/js/home2.js" />
         <option value="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/controllers3.py" />
-        <option value="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/app.py" />
         <option value="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/templates/historical_validation_tool_australia/base.html" />
         <option value="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/controllers.py" />
         <option value="$PROJECT_DIR$/tethysapp_historical_validation_tool_australia.egg-info/install.yml" />
+        <option value="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/app.py" />
+        <option value="$PROJECT_DIR$/setup.py" />
       </list>
     </option>
   </component>
@@ -178,8 +182,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -245,6 +247,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -253,11 +257,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/tethysapp_historical_validation_tool_australia.egg-info" />
       <recent name="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia" />
       <recent name="$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/public/js" />
       <recent name="$PROJECT_DIR$/../historical_validation_tool_dominican_republic" />
-      <recent name="$PROJECT_DIR$/../historical_validation_tool_colombia/tethysapp/historical_validation_tool_colombia/public/js" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -292,7 +296,7 @@
     <frame x="191" y="171" width="1489" height="766" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28818244" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29647547" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="R Packages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="R Graphics" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32954547" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -340,13 +344,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/public/js/home.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16875">
-          <caret line="1125" column="20" lean-forward="false" selection-start-line="1125" selection-start-column="20" selection-end-line="1125" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/controllers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3630">
@@ -637,14 +634,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/app2.py" />
     <entry file="file://$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/public/js/home2.js" />
-    <entry file="file://$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/app.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="14" lean-forward="false" selection-start-line="35" selection-start-column="14" selection-end-line="35" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/templates/historical_validation_tool_australia/base.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
@@ -677,14 +666,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/setup3.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="17" column="140" lean-forward="false" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="140" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/controllers3.py" />
     <entry file="file://$PROJECT_DIR$/tethysapp_historical_validation_tool_australia.egg-info/install.yml">
       <provider selected="true" editor-type-id="text-editor">
@@ -696,8 +677,34 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/controllers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="16" column="55" lean-forward="true" selection-start-line="16" selection-start-column="55" selection-end-line="16" selection-end-column="55" />
+        <state relative-caret-position="975">
+          <caret line="65" column="19" lean-forward="false" selection-start-line="65" selection-start-column="19" selection-end-line="65" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup3.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="17" column="140" lean-forward="false" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="140" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tethysapp/historical_validation_tool_australia/app.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="114" lean-forward="false" selection-start-line="15" selection-start-column="114" selection-end-line="15" selection-end-column="114" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="142">
+          <caret line="19" column="116" lean-forward="false" selection-start-line="19" selection-start-column="116" selection-end-line="19" selection-end-column="116" />
           <folding />
         </state>
       </provider>
